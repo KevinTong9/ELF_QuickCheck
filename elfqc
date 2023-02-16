@@ -1,0 +1,20 @@
+#!/bin/sh
+
+output=$(dirname $1)/exp.py
+
+showT()
+{
+    TitleLength=50
+    Fix="-"
+    for i in $(seq 2 $(((${TitleLength}-8-${#1})/2)))};
+    do
+        Fix="$Fix-"
+    done
+    echo "# >${Fix}[ $1 ]${Fix}<"
+}
+
+showT "程序架构 & 保护机制" >>${output}
+checksec $1 2>&1 | sed "s/^/# /g" >>${output}
+echo "" >> ${output}
+showT "文件头" >>${output}
+objdump $1 2>&1 -f | sed "/^[ ]\+\?$/d" | sed "s/^/# /g" >>${output}
